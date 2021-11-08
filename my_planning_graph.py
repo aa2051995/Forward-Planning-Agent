@@ -20,6 +20,17 @@ class ActionLayer(BaseActionLayer):
         layers.ActionNode
         """
         # TODO: implement this function
+        for A in actionA.effects:
+            for B in actionB.effects:
+                if  A == ~B:
+                    return True;
+        for A in actionB.effects:
+            for B in actionA.effects:
+                if  A == ~B:
+                    return True;
+        return False
+        
+        
         raise NotImplementedError
 
 
@@ -35,6 +46,16 @@ class ActionLayer(BaseActionLayer):
         layers.ActionNode
         """
         # TODO: implement this function
+        for effect in actionA.effects :
+            for precon in actionB.preconditions :
+                if  effect ==  ~precon :
+                    return True;
+        for effect in actionB.effects :
+            for precon in actionA.preconditions :
+                if  effect ==  ~precon :
+                    return True;
+            
+        return False                
         raise NotImplementedError
 
     def _competing_needs(self, actionA, actionB):
@@ -50,6 +71,11 @@ class ActionLayer(BaseActionLayer):
         layers.BaseLayer.parent_layer
         """
         # TODO: implement this function
+        for A in actionA.preconditions :
+            for B in actionB.preconditions :
+                if self.parent_layer.is_mutex(A,B):
+                    return True;
+        return False
         raise NotImplementedError
 
 
@@ -67,11 +93,20 @@ class LiteralLayer(BaseLiteralLayer):
         layers.BaseLayer.parent_layer
         """
         # TODO: implement this function
+        for A in self.parents[literalA] :
+             for B in self.parents[literalB] :
+                    if not self.parent_layer.is_mutex(A,B) :
+                        return False
+        return True    
         raise NotImplementedError
 
     def _negation(self, literalA, literalB):
         """ Return True if two literals are negations of each other """
-        # TODO: implement this function
+        #TODO: implement this function
+        if  ~literalA == literalB :
+            return True
+        else:
+            return False
         raise NotImplementedError
 
 
@@ -109,7 +144,13 @@ class PlanningGraph:
         layer.update_mutexes()
         self.literal_layers = [layer]
         self.action_layers = []
-
+    '''def level_cost(self, goal):
+        x = 0
+        for layer in self.literal_layers:
+            if goal in layer:
+                return x
+            x+=1  
+    '''     
     def h_levelsum(self):
         """ Calculate the level sum heuristic for the planning graph
 
@@ -136,6 +177,19 @@ class PlanningGraph:
         Russell-Norvig 10.3.1 (3rd Edition)
         """
         # TODO: implement this function
+        goals = self.goal.copy()
+        sum = 0
+        while not self._is_leveled and  len(goals)!=0:
+            parent_li = self.literal_layers[-1]
+            listgoal = list(goals).copy()
+            for goal in listgoal:
+                if goal in parent_li:
+                    goals.remove(goal)
+            
+            if len(goals) !=0:
+                self._extend()
+                sum += len(goals)
+        return sum
         raise NotImplementedError
 
     def h_maxlevel(self):
@@ -166,6 +220,18 @@ class PlanningGraph:
         WARNING: you should expect long runtimes using this heuristic with A*
         """
         # TODO: implement maxlevel heuristic
+        goals = self.goal.copy()
+        sum = 0
+        while not self._is_leveled and  len(goals)!=0:
+            parent_li = self.literal_layers[-1]
+            listgoal = list(goals)
+            for goal in listgoal:
+                if goal in parent_li:
+                    goals.remove(goal)
+            if len(goals) !=0:
+                self._extend()
+                sum += 1
+        return sum
         raise NotImplementedError
 
     def h_setlevel(self):
@@ -191,6 +257,26 @@ class PlanningGraph:
         WARNING: you should expect long runtimes using this heuristic on complex problems
         """
         # TODO: implement setlevel heuristic
+        x = 0
+        while not self._is_leveled:
+            parent_li = self.literal_layers[-1]
+            allmet = True
+            for goal in self.goal:
+                if not goal in parent_li:
+                    allmet = False
+            if not allmet:
+                self._extend()
+                continue
+            aremutex = False
+            for goala in self.goal:
+                for goalb in self.goal:
+                    if parent_li.is_mutex(goala,goalb):
+                        aremutex = True
+            if not aremutex:
+                return  2*x  
+            else:
+                self._extend()
+            x+=1    
         raise NotImplementedError
 
     ##############################################################################
@@ -253,3 +339,4 @@ class PlanningGraph:
         self.action_layers.append(action_layer)
         self.literal_layers.append(literal_layer)
         self._is_leveled = literal_layer == action_layer.parent_layer
+      
