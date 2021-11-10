@@ -7,10 +7,7 @@ from aimacode.search import Node, Problem
 from _utils import encode_state, decode_state
 from my_planning_graph import PlanningGraph
 
-    ##############################################################################
-    #                 YOU DO NOT NEED TO MODIFY CODE IN THIS FILE                #
-    ##############################################################################
-
+   
 
 class BasePlanningProblem(Problem):
     def __init__(self, initial, goal):
@@ -33,10 +30,6 @@ class BasePlanningProblem(Problem):
         state space to estimate the sum of the number of actions that must be
         carried out from the current state in order to satisfy each individual
         goal condition.
-
-        See Also
-        --------
-        Russell-Norvig 10.3.1 (3rd Edition)
         """
         pg = PlanningGraph(self, node.state, serialize=True, ignore_mutexes=True)
         score = pg.h_levelsum()
@@ -48,10 +41,6 @@ class BasePlanningProblem(Problem):
         to estimate the maximum level cost out of all the individual goal literals.
         The level cost is the first level where a goal literal appears in the
         planning graph.
-
-        See Also
-        --------
-        Russell-Norvig 10.3.1 (3rd Edition)
         """
         pg = PlanningGraph(self, node.state, serialize=True, ignore_mutexes=True)
         score = pg.h_maxlevel()
@@ -62,10 +51,6 @@ class BasePlanningProblem(Problem):
         """ This heuristic uses a planning graph representation of the problem
         to estimate the level cost in the planning graph to achieve all of the
         goal literals such that none of them are mutually exclusive.
-
-        See Also
-        --------
-        Russell-Norvig 10.3.1 (3rd Edition)
         """
         pg = PlanningGraph(self, node.state, serialize=True)
         score = pg.h_setlevel()
