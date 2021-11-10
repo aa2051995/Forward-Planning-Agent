@@ -11,13 +11,7 @@ class ActionLayer(BaseActionLayer):
     def _inconsistent_effects(self, actionA, actionB):
         """ Return True if an effect of one action negates an effect of the other
 
-        Hints:
-            (1) `~Literal` can be used to logically negate a literal
-            (2) `self.children` contains a map from actions to effects
-
-        See Also
-        --------
-        layers.ActionNode
+      
         """
         # TODO: implement this function
         for A in actionA.effects:
@@ -37,13 +31,6 @@ class ActionLayer(BaseActionLayer):
     def _interference(self, actionA, actionB):
         """ Return True if the effects of either action negate the preconditions of the other 
 
-        Hints:
-            (1) `~Literal` can be used to logically negate a literal
-            (2) `self.parents` contains a map from actions to preconditions
-        
-        See Also
-        --------
-        layers.ActionNode
         """
         # TODO: implement this function
         for effect in actionA.effects :
@@ -92,7 +79,7 @@ class LiteralLayer(BaseLiteralLayer):
         --------
         layers.BaseLayer.parent_layer
         """
-        # TODO: implement this function
+    
         for A in self.parents[literalA] :
              for B in self.parents[literalB] :
                     if not self.parent_layer.is_mutex(A,B) :
@@ -102,7 +89,7 @@ class LiteralLayer(BaseLiteralLayer):
 
     def _negation(self, literalA, literalB):
         """ Return True if two literals are negations of each other """
-        #TODO: implement this function
+       
         if  ~literalA == literalB :
             return True
         else:
@@ -164,19 +151,9 @@ class PlanningGraph:
         it is satisfied at the root of the planning graph) and Goal_2 first
         appears in level 3, then the levelsum is 0 + 3 = 3.
 
-        Hints
-        -----
-          (1) See the pseudocode folder for help on a simple implementation
-          (2) You can implement this function more efficiently than the
-              sample pseudocode if you expand the graph one level at a time
-              and accumulate the level cost of each goal rather than filling
-              the whole graph at the start.
+     
 
-        See Also
-        --------
-        Russell-Norvig 10.3.1 (3rd Edition)
-        """
-        # TODO: implement this function
+       
         goals = self.goal.copy()
         sum = 0
         while not self._is_leveled and  len(goals)!=0:
@@ -204,20 +181,8 @@ class PlanningGraph:
         For example, if Goal1 first appears in level 1 of the graph and
         Goal2 first appears in level 3, then the levelsum is max(1, 3) = 3.
 
-        Hints
-        -----
-          (1) See the pseudocode folder for help on a simple implementation
-          (2) You can implement this function more efficiently if you expand
-              the graph one level at a time until the last goal is met rather
-              than filling the whole graph at the start.
-
-        See Also
-        --------
-        Russell-Norvig 10.3.1 (3rd Edition)
-
-        Notes
-        -----
-        WARNING: you should expect long runtimes using this heuristic with A*
+        
+       
         """
         # TODO: implement maxlevel heuristic
         goals = self.goal.copy()
@@ -241,22 +206,8 @@ class PlanningGraph:
         appear such that no pair of goal literals are mutex in the last
         layer of the planning graph.
 
-        Hints
-        -----
-          (1) See the pseudocode folder for help on a simple implementation
-          (2) You can implement this function more efficiently if you expand
-              the graph one level at a time until you find the set level rather
-              than filling the whole graph at the start.
-
-        See Also
-        --------
-        Russell-Norvig 10.3.1 (3rd Edition)
-
-        Notes
-        -----
-        WARNING: you should expect long runtimes using this heuristic on complex problems
         """
-        # TODO: implement setlevel heuristic
+       
         x = 0
         while not self._is_leveled:
             parent_li = self.literal_layers[-1]
@@ -279,10 +230,6 @@ class PlanningGraph:
             x+=1    
         raise NotImplementedError
 
-    ##############################################################################
-    #                     DO NOT MODIFY CODE BELOW THIS LINE                     #
-    ##############################################################################
-
     def fill(self, maxlevels=-1):
         """ Extend the planning graph until it is leveled, or until a specified number of
         levels have been added
@@ -293,9 +240,6 @@ class PlanningGraph:
             The maximum number of levels to extend before breaking the loop. (Starting with
             a negative value will never interrupt the loop.)
 
-        Notes
-        -----
-        YOU SHOULD NOT THIS FUNCTION TO COMPLETE THE PROJECT, BUT IT MAY BE USEFUL FOR TESTING
         """
         while not self._is_leveled:
             if maxlevels == 0: break
